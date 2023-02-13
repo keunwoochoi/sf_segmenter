@@ -1,4 +1,4 @@
-`import librosa
+import librosa
 import soundfile as sf
 import numpy as np
 from scipy import signal
@@ -355,4 +355,3 @@ class Segmenter(object):
             boundaries=self.boundaries,
             outdir=outdir,
             vis_bounds=vis_bounds)
-        
