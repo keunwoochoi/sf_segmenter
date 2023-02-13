@@ -1,4 +1,4 @@
-import librosa
+`import librosa
 import soundfile as sf
 import numpy as np
 from scipy import signal
@@ -108,26 +108,6 @@ def compute_nc(X):
     nc += np.abs(nc.min())
     nc /= float(nc.max())
     return nc
-
-
-def pick_peaks(nc, L=16, offset_denom=0.1):
-    """Obtain peaks from a novelty curve using an adaptive threshold."""
-    offset = nc.mean() * float(offset_denom)
-    th = filters.median_filter(nc, size=L) + offset
-    #th = filters.gaussian_filter(nc, sigma=L/2., mode="nearest") + offset
-    #import pylab as plt
-    #plt.plot(nc)
-    #plt.plot(th)
-    #plt.show()
-    # th = np.ones(nc.shape[0]) * nc.mean() - 0.08
-    peaks = []
-    for i in range(1, nc.shape[0] - 1):
-        # is it a peak?
-        if nc[i - 1] < nc[i] and nc[i] > nc[i + 1]:
-            # is it above the threshold?
-            if nc[i] > th[i]:
-                peaks.append(i)
-    return peaks
 
 
 def circular_shift(X):
@@ -339,6 +319,25 @@ class Segmenter(object):
             self.boundaries = est_idxs
             return est_idxs
 
+    def pick_peaks(self, nc, L=16, offset_denom=0.1):
+        """Obtain peaks from a novelty curve using an adaptive threshold."""
+        offset = nc.mean() * float(offset_denom)
+        th = filters.median_filter(nc, size=L) + offset
+        # th = filters.gaussian_filter(nc, sigma=L/2., mode="nearest") + offset
+        # import pylab as plt
+        # plt.plot(nc)
+        # plt.plot(th)
+        # plt.show()
+        # th = np.ones(nc.shape[0]) * nc.mean() - 0.08
+        peaks = []
+        for i in range(1, nc.shape[0] - 1):
+            # is it a peak?
+            if nc[i - 1] < nc[i] and nc[i] > nc[i + 1]:
+                # is it above the threshold?
+                if nc[i] > th[i]:
+                    peaks.append(i)
+        return peaks
+
     def plot(
             self, 
             outdir=None,
@@ -356,3 +355,4 @@ class Segmenter(object):
             boundaries=self.boundaries,
             outdir=outdir,
             vis_bounds=vis_bounds)
+        
