@@ -253,7 +253,8 @@ class Segmenter(object):
     def process(
             self, 
             F, 
-            is_label=False):
+            is_label=False,
+            pp_kwargs=None):
         """Main process.
         Returns
 
@@ -270,7 +271,8 @@ class Segmenter(object):
         m = self.config["m_embedded"]     # Number of embedded dimensions
         k = self.config["k_nearest"]      # k*N-nearest neighbors for the
                                           # recurrence plot
-
+        if pp_kwargs is None:
+            pp_kwargs = {"L": Mp, "offset_denom": od}
         # Normalize
         F = normalize(F, norm_type=self.config["bound_norm_feats"])
 
@@ -298,7 +300,8 @@ class Segmenter(object):
             nc = compute_nc(SF)
 
             # Find peaks in the novelty curve
-            est_bounds = pick_peaks(nc, L=Mp, offset_denom=od)
+            # est_bounds = pick_peaks(nc, L=Mp, offset_denom=od)
+            est_bounds = self.pick_peaks(nc, **pp_kwargs)
 
             # Re-align embedded space
             est_bounds = np.asarray(est_bounds) + int(np.ceil(m / 2.))
